@@ -267,6 +267,7 @@ func handleOAuth2Callback(config *oauth2.Config, s sessions.Session, w http.Resp
 		http.Redirect(w, r, PathError, http.StatusFound)
 		return
 	}
+	fmt.Printf("Exchange result token: %s", t)
 	// Store the credentials in the session.
 	val, _ := json.Marshal(t)
 	s.Set(keyToken, val)
