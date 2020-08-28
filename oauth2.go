@@ -270,7 +270,7 @@ func handleOAuth2Callback(config *oauth2.Config, s sessions.Session, w http.Resp
 	// Skip raw part because it gets to big to be
 	// stored in a secure cookie
 	t = t.WithExtra(map[string]string{})
-	fmt.Printf("Exchange result token: %s", t)
+	fmt.Printf("Exchange token result: %s", t)
 	// Store the credentials in the session.
 	val, _ := json.Marshal(t)
 	s.Set(keyToken, val)
