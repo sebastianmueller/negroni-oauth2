@@ -38,6 +38,8 @@ const (
 	keyState     = "state"
 )
 
+type ErrorCallbackFunc func(error)
+
 var (
 	// PathLogin sets the path to handle OAuth 2.0 logins.
 	PathLogin = "/login"
@@ -48,6 +50,8 @@ var (
 	PathCallback = "/oauth2callback"
 	// PathError sets the path to handle error cases.
 	PathError = "/oauth2error"
+	// Callback that gets called in case of an error before the redirect to PathError happens
+	ErrorCallback ErrorCallbackFunc = nil
 )
 
 type Config oauth2.Config
@@ -262,8 +266,11 @@ func handleOAuth2Callback(config *oauth2.Config, s sessions.Session, w http.Resp
 	code := r.URL.Query().Get("code")
 	t, err := config.Exchange(oauth2.NoContext, code)
 	if err != nil {
-		// Pass the error message, or allow dev to provide its own
-		// error handler.
+		// Call error handler provided by dev
+		if ErrorCallback != nil {
+			ErrorCallback(err)
+		}
+		// Redirect to the error page
 		http.Redirect(w, r, PathError, http.StatusFound)
 		return
 	}
